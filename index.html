@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz de Árbol Binario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        input[type="number"], button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8e8e8;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gestión de Árbol Binario</h1>
+
+    <label for="node-value">Valor del nodo:</label>
+    <input type="number" id="node-value" placeholder="Ingresa un número">
+
+    <div>
+        <button onclick="agregarNodo()">Agregar Nodo</button>
+        <button onclick="buscarNodo()">Buscar Nodo</button>
+        <button onclick="listarPreorder()">Listar Preorder</button>
+        <button onclick="listarInorder()">Listar Inorder</button>
+        <button onclick="listarPostorder()">Listar Postorder</button>
+    </div>
+
+    <div class="output" id="output"></div>
+</div>
+
+<script>
+    class Nodo {
+        constructor(numero) {
+            this.numero = numero;
+            this.hizq = null;
+            this.hder = null;
+        }
+    }
+
+    class ArbolBinario {
+        constructor() {
+            this.raiz = null;
+        }
+
+        agregar(nuevo) {
+            if (this.raiz == null) {
+                this.raiz = nuevo;
+            } else {
+                this._recAgregar(nuevo, this.raiz);
+            }
+        }
+
+        _recAgregar(nuevo, raizx) {
+            if (nuevo.numero < raizx.numero) {
+                if (raizx.hizq == null) {
+                    raizx.hizq = nuevo;
+                } else {
+                    this._recAgregar(nuevo, raizx.hizq);
+                }
+            } else {
+                if (raizx.hder == null) {
+                    raizx.hder = nuevo;
+                } else {
+                    this._recAgregar(nuevo, raizx.hder);
+                }
+            }
+        }
+
+        preorder() {
+            if (this.raiz == null) {
+                return null;
+            } else {
+                return this._preorder(this.raiz);
+            }
+        }
+
+        _preorder(nodox) {
+            let res = nodox.numero + " ";
+            if (nodox.hizq != null) {
+                res += this._preorder(nodox.hizq);
+            }
+            if (nodox.hder != null) {
+                res += this._preorder(nodox.hder);
+            }
+            return res;
+        }
+
+        inorder() {
+            if (this.raiz == null) {
+                return null;
+            } else {
+                return this._inorder(this.raiz);
+            }
+        }
+
+        _inorder(nodox) {
+            let res = "";
+            if (nodox.hizq != null) {
+                res += this._inorder(nodox.hizq);
+            }
+            res += nodox.numero + " ";
+            if (nodox.hder != null) {
+                res += this._inorder(nodox.hder);
+            }
+            return res;
+        }
+
+        postorder() {
+            if (this.raiz == null) {
+                return null;
+            } else {
+                return this._postorder(this.raiz);
+            }
+        }
+
+        _postorder(nodox) {
+            let res = "";
+            if (nodox.hizq != null) {
+                res += this._postorder(nodox.hizq);
+            }
+            if (nodox.hder != null) {
+                res += this._postorder(nodox.hder);
+            }
+            res += nodox.numero + " ";
+            return res;
+        }
+
+        buscar(num) {
+            if (this.raiz == null) {
+                return null;
+            } else {
+                return this._buscar(this.raiz, num);
+            }
+        }
+
+        _buscar(nodox, num) {
+            if (num == nodox.numero) {
+                return nodox;
+            }
+            if (num < nodox.numero) {
+                return nodox.hizq ? this._buscar(nodox.hizq, num) : null;
+            }
+            if (num > nodox.numero) {
+                return nodox.hder ? this._buscar(nodox.hder, num) : null;
+            }
+        }
+    }
+
+    const arbol = new ArbolBinario();
+
+    function agregarNodo() {
+        const valor = parseInt(document.getElementById("node-value").value);
+        if (!isNaN(valor)) {
+            const nuevoNodo = new Nodo(valor);
+            arbol.agregar(nuevoNodo);
+            document.getElementById("output").innerText = `Nodo ${valor} agregado al árbol.`;
+        } else {
+            document.getElementById("output").innerText = "Por favor, ingresa un número válido.";
+        }
+    }
+
+    function buscarNodo() {
+        const valor = parseInt(document.getElementById("node-value").value);
+        const nodo = arbol.buscar(valor);
+        document.getElementById("output").innerText = nodo
+            ? `Nodo ${valor} encontrado en el árbol.`
+            : `Nodo ${valor} no se encuentra en el árbol.`;
+    }
+
+    function listarPreorder() {
+        const resultado = arbol.preorder();
+        document.getElementById("output").innerText = `Recorrido Preorder: ${resultado}`;
+    }
+
+    function listarInorder() {
+        const resultado = arbol.inorder();
+        document.getElementById("output").innerText = `Recorrido Inorder: ${resultado}`;
+    }
+
+    function listarPostorder() {
+        const resultado = arbol.postorder();
+        document.getElementById("output").innerText = `Recorrido Postorder: ${resultado}`;
+    }
+</script>
+
+</body>
+</html>
